@@ -1,0 +1,24 @@
+# venvs
+.venv/
+venv/
+env/
+
+# Random Stuff
+.DS_Store
+
+# Python Droppings
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Big Files
+mlruns/
+artifacts/
+data/raw/
+data/processed/
+
+
+# Keep Serving Model
+!src/serving/model/
+!src/serving/model/**
+# ! -> exception of a given ignore rule
