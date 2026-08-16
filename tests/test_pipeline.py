@@ -1,9 +1,5 @@
-import pandas as pd
-
-from src.data.load_data import load_data
-from src.data.process_data import process_data
-from src.data.validate_data import validate_data
-from src.features.pipeline import clean_features
+from src.data import load_data, process_data, validate_data
+from src.features import clean_features
 
 
 def test_process_data_generates_model_ready_frame():

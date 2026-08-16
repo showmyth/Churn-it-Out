@@ -12,6 +12,8 @@ __all__ = [
     "MODEL_INPUT_SCHEMA",
 ]
 
+from .schema import MODEL_INPUT_SCHEMA, RAW_SCHEMA
+
 
 def clean_features(*args, **kwargs):
     from .pipeline import clean_features as _clean_features
@@ -21,10 +23,3 @@ def clean_features(*args, **kwargs):
 def pipeline_from_file(*args, **kwargs):
     from .pipeline import pipeline_from_file as _pipeline_from_file
     return _pipeline_from_file(*args, **kwargs)
-
-
-def __getattr__(name):
-    if name in {"RAW_SCHEMA", "MODEL_INPUT_SCHEMA"}:
-        from .schema import RAW_SCHEMA, MODEL_INPUT_SCHEMA
-        return {"RAW_SCHEMA": RAW_SCHEMA, "MODEL_INPUT_SCHEMA": MODEL_INPUT_SCHEMA}[name]
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

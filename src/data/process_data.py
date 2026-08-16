@@ -1,6 +1,6 @@
 import pandas as pd
 
-from features.schema import RAW_SCHEMA
+from src.features.schema import RAW_SCHEMA
 
 
 def _binary_mapping(s: pd.Series) -> pd.Series:
@@ -32,7 +32,10 @@ def process_data(df: pd.DataFrame, target: str = "Churn") -> pd.DataFrame:
         df = df.drop(columns=drop_cols, errors="ignore")
 
     # 2. Encode target column
-    if target in df.columns and pd.api.types.is_object_dtype(df[target]):
+    if target in df.columns and (
+        pd.api.types.is_object_dtype(df[target])
+        or pd.api.types.is_string_dtype(df[target])
+    ):
         encoded_target = df[target].astype(str).str.strip()
         df[target] = encoded_target.map({"Yes": 1, "No": 0}).astype("Int64")
 
@@ -46,7 +49,15 @@ def process_data(df: pd.DataFrame, target: str = "Churn") -> pd.DataFrame:
     df[num_cols] = df[num_cols].fillna(0)
 
     # 5. Encode binary and multi-category columns
-    obj_cols = [col for col in df.select_dtypes(include=["object"]).columns if col != target]
+    obj_cols = [
+        col
+        for col in df.columns
+        if col != target
+        and (
+            pd.api.types.is_object_dtype(df[col])
+            or pd.api.types.is_string_dtype(df[col])
+        )
+    ]
     bool_cols = df.select_dtypes(include=["bool"]).columns.tolist()
 
     binary_cols = [col for col in obj_cols if df[col].dropna().nunique() == 2]
@@ -64,4 +75,3 @@ def process_data(df: pd.DataFrame, target: str = "Churn") -> pd.DataFrame:
         df = pd.get_dummies(df, columns=multi_cols, drop_first=True)
 
     return df
-
