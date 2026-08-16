@@ -13,6 +13,9 @@ __pycache__/
 
 # Big Files
 mlruns/
+
+# No lookey lookey
+mlflow.db
 artifacts/
 data/raw/
 data/processed/
