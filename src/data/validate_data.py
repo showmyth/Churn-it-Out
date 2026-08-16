@@ -78,6 +78,19 @@ def validate_data(df: pd.DataFrame) -> Tuple[bool, List[str]]:
         name="telco_raw_validation",
         suite=_build_expectation_suite(),
     )
+
+    # create suite
+    suite = _build_expectation_suite()
+    context.suites.add(suite)
+
+    validation_definition = gx.ValidationDefinition(
+        data=batch_definition,
+        name="telco_raw_validation",
+        suite=suite,
+    )
+
+    context.validation_definitions.add(validation_definition)  # ← add this
+ 
     result = validation_definition.run(batch_parameters={"dataframe": df})
 
     failed_tests = [

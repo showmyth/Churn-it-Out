@@ -1,4 +1,8 @@
 from pathlib import Path
+import sys
+
+project_root = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(project_root))
 
 from src.data.load_data import load_data
 from src.features.pipeline import clean_features

@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.features.schema import RAW_SCHEMA
+from features.schema import RAW_SCHEMA
 
 
 def _binary_mapping(s: pd.Series) -> pd.Series:
