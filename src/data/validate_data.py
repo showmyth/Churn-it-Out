@@ -5,17 +5,17 @@ from typing import Tuple, List
 def validate_data(df : pd.DataFrame) -> Tuple[bool, List[str]]:
     """
     Data validation for given Customer Churn dataset using Great Expectations.
-    
+        
     Implements data quality checks that must pass before model training.
-    
+     
     Validates data integrity, business logic constraints, and statistical properties
-    that the ML model expects.
-
+    that the ML model expects. 
+    
     Args:
-       df (pd.DataFrame): Input DataFrame 
+        df (pd.DataFrame): Input Dataframe
 
     Returns:
-       results (tuple): results["sucess"] if run succeeds else failed_expectations    
+        tuple: results["success"] / results["failure"]
     """
 
     print("Validating Data...")
