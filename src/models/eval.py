@@ -19,7 +19,7 @@ def evaluate_model(
     X_test,
     y_test,
     *,
-    threshold: float = 0.5,
+    threshold: float = 0.2,
     model_name: str = "baseline_eval",
     nested: bool = True,
 ) -> dict:

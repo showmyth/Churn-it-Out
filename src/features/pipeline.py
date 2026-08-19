@@ -21,22 +21,23 @@ def validate_against_schema(df: pd.DataFrame) -> bool:
     return is_valid
 
 
-def clean_features(df: pd.DataFrame, target: str = "Churn") -> Tuple[pd.DataFrame, pd.Series]:
+def clean_features(df: pd.DataFrame, target: str = "Churn", validate: bool = True) -> Tuple[pd.DataFrame, pd.Series]:
     """Validate -> process -> split into features and target arrays."""
-    print("Step 1: Validating raw data against schema...")
-    validate_against_schema(df)
+    if validate: 
+        print("Validating raw data against schema...")
+        validate_against_schema(df)
 
-    print("Step 2: Processing and engineering features...")
+    print("Processing and engineering features...")
     processed_df = process_data(df, target=target)
 
-    print("Step 3: Splitting features and target...")
+    print("Splitting features and target...")
     if target not in processed_df.columns:
         raise ValueError(f"Target column '{target}' not found in processed data")
 
     y = processed_df[target]
     X = processed_df.drop(columns=[target])
 
-    print("Step 4: Validating output...")
+    print("Validating output...")
     print(f"   Features shape: {X.shape}")
     print(f"   Target shape: {y.shape}")
 

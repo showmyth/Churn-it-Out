@@ -1,6 +1,8 @@
 import pandas as pd
 import mlflow
 import mlflow.xgboost as mlflow_xgboost
+from mlflow.data.pandas_dataset import from_pandas
+
 from sklearn.metrics import (
     accuracy_score,
     f1_score,
@@ -10,6 +12,7 @@ from sklearn.metrics import (
 )
 from sklearn.model_selection import train_test_split
 from xgboost import XGBClassifier
+from typing import Any
 
 
 def train_model(
@@ -68,14 +71,22 @@ def train_model(
 
     probabilities = model.predict_proba(X_test)[:, 1]
     preds = (probabilities >= threshold).astype(int)
-
+    if y_test is not None and preds is not None:
+        acc = accuracy_score(y_test, preds)
+        prec = precision_score(y_test, preds, zero_division=0)
+        rec = recall_score(y_test, preds, zero_division=0)
+        f1 = f1_score(y_test, preds, zero_division=0)
+    else:
+        acc, prec, rec, f1 = 0, 0, 0, 0
+        
     metrics: dict = {
-        "accuracy": float(accuracy_score(y_test, preds)),
-        "precision": float(precision_score(y_test, preds, zero_division=0)),
-        "recall": float(recall_score(y_test, preds, zero_division=0)),
-        "f1": float(f1_score(y_test, preds, zero_division=0)),
+        "accuracy": float(acc),
+        "precision": float(prec),
+        "recall": float(rec),
+        "f1": float(f1),
     }
-    if y_test.nunique() > 1:
+
+    if y_test is not None and y_test.nunique() > 1:
         metrics["roc_auc"] = float(roc_auc_score(y_test, probabilities))
     else:
         import warnings
@@ -93,7 +104,7 @@ def train_model(
 
         if log_dataset:
             try:
-                train_ds = mlflow.data.from_pandas(
+                train_ds = from_pandas(
                     pd.concat([X_train, y_train], axis=1),
                     source="training_data",
                 )

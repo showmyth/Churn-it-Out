@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 import mlflow
-import mlflow.xgboost
+import mlflow.xgboost as mlflow_xgboost
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 if str(ROOT_DIR) not in sys.path:
@@ -36,7 +36,7 @@ def try_load_model_from_path(model_path: str):
 
     if (path / "MLmodel").exists() or (path / "model.ubj").exists():
         print(f"Loading MLflow model from local path: {path}")
-        return mlflow.xgboost.load_model(str(path))
+        return mlflow_xgboost.load_model(str(path))
 
     print(f"No MLflow model files found under: {path}")
     return None
@@ -58,6 +58,8 @@ model_name = best_run.get("tags.model_name") or best_run.get("tags.mlflow.runNam
 print(f"Best recall run ID: {run_id}")
 print(f"Model name: {model_name}")
 print(f"Recall: {best_run['metrics.recall']}")
+
+best_model = None
 
 artifact_path = get_logged_model_artifact_path(run_id)
 if artifact_path:
@@ -87,4 +89,18 @@ else:
         print("No runnable model artifact was found for the best recall run.")
         if last_error is not None:
             print(f"Last MLflow load error: {last_error}")
+
+# saving to serving dir
+SERVING_DIR = ROOT_DIR / "src" / "serving"
+print(f"Adding serving model to {SERVING_DIR}...")
+
+try:
+    mlflow_xgboost.save_model(
+        xgb_model=best_model,
+        path=str(SERVING_DIR) + "/model"
+    )
+except:
+    raise Exception("Wow this did not work")
+
+
 
